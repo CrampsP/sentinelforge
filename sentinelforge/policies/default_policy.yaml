@@ -1,0 +1,44 @@
+project:
+  environment: local
+  internet_facing: false
+  contains_pii: false
+  auth_required: false
+  payment_processing: false
+  ai_features: false
+
+authorization:
+  confirmed: true
+  allowed_hosts:
+    - localhost
+    - 127.0.0.1
+  blocked_hosts:
+    - "*"
+
+scan:
+  depth: standard
+  allow_dynamic_testing: false
+  allow_authenticated_testing: false
+  allow_destructive_testing: false
+  max_requests_per_second: 5
+  timeout_minutes: 20
+
+grading:
+  fail_on_critical: true
+  fail_on_secret: true
+  fail_on_auth_bypass: true
+  fail_on_public_database: true
+  minimum_passing_grade: B
+
+autofix:
+  enabled: false
+  create_branch: true
+  create_pull_request: false
+  require_human_review: true
+
+reporting:
+  formats:
+    - markdown
+    - json
+  create_github_issues: false
+  include_raw_tool_output: true
+  redact_secrets: true
