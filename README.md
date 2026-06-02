@@ -20,13 +20,35 @@ The first version provides a static MVP:
 ## Run
 
 ```bash
-python -m sentinelforge.cli scan --target ./my-app --mode static
+sentinelforge scan --target ./my-app --mode static
 ```
 
 Reports are written to:
 
 - `reports/latest_report.md`
 - `reports/latest_report.json`
+
+## Program Core + Agent Layer
+
+SentinelForge is designed as a reliable program first, with an agentic analyst layer on top.
+
+The program core enforces safety, scanner execution, schema normalization, redaction, scoring, reports, and CI gates.
+
+The agent layer explains findings, prioritizes fixes, reviews AI-specific risks, and suggests safe remediation. It must not override program safety controls.
+
+## Useful Commands
+
+Check scanner readiness:
+
+```bash
+sentinelforge doctor
+```
+
+Fail CI/CD if a report is below a minimum grade:
+
+```bash
+sentinelforge gate --report reports/latest_report.json --minimum-grade B
+```
 
 ## External Scanner Tools
 
