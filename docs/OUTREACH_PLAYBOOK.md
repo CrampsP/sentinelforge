@@ -8,6 +8,13 @@ Before you ship AI-written or client code, get a plain-English SentinelForge Sec
 
 Keep public pricing off the repo. Discuss scope and payment privately after the person shows interest.
 
+Current product access model:
+
+- Free forever: help, doctor, explain, init-policy, init-ci, license-status, and activate commands.
+- Trial: one full local scan.
+- Paid/private: continued full scans after activation.
+- Payment/license delivery: manual for now. Upgrade to automatic Stripe Checkout + license delivery after 30 paid customers.
+
 ## Best first customers
 
 1. Freelance web developers
@@ -78,7 +85,7 @@ Helpful issue comment example:
 ```text
 This looks like the kind of risk a pre-launch security checklist can help catch early: secrets, dependency versions, auth paths, and config defaults.
 
-I’m building SentinelForge, a local-first security release checker for small apps and AI-built projects. The free CLI may help you run a quick first-pass check locally. If useful, the repo is here: <repo-url>
+I’m building SentinelForge, a local-first security release checker for small apps and AI-built projects. The CLI includes free trust commands and a one-scan trial so you can run a quick first-pass check locally. If useful, the repo is here: <repo-url>
 
 No scanner guarantees security, but it can help catch common mistakes before launch.
 ```

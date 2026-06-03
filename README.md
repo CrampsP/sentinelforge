@@ -65,13 +65,13 @@ Download the latest wheel from the GitHub Releases page, then install it with `p
 Example with `pipx`:
 
 ```bash
-pipx install ./sentinelforge-1.5.0-py3-none-any.whl
+pipx install ./sentinelforge-1.5.1-py3-none-any.whl
 ```
 
 Example with `uv`:
 
 ```bash
-uv tool install ./sentinelforge-1.5.0-py3-none-any.whl
+uv tool install ./sentinelforge-1.5.1-py3-none-any.whl
 ```
 
 Full beginner install instructions are in:
@@ -81,6 +81,10 @@ INSTALL_SENTINELFORGE_v1.5.md
 ```
 
 ## Run
+
+SentinelForge includes free forever trust commands such as `--help`, `doctor`, `explain`, `init-policy`, `init-ci`, `license-status`, and `activate`.
+
+You also get one full local scan trial. After the trial scan is used, continued full scans require an activated SentinelForge license.
 
 Static local repository scan:
 
@@ -197,10 +201,22 @@ Create a GitHub Actions workflow:
 sentinelforge init-ci
 ```
 
+Check trial/license status:
+
+```bash
+sentinelforge license-status
+```
+
+Activate a license key after receiving one from the maintainer:
+
+```bash
+sentinelforge activate YOUR-LICENSE-KEY
+```
+
 Explain one finding in plain English:
 
 ```bash
-sentinelforge explain --title "Debug mode enabled" --severity medium --category "Static Analysis"
+sentinelforge explain --report reports/latest_report.json --finding-id static-001
 ```
 
 Fail CI/CD if a report is below a minimum grade:
