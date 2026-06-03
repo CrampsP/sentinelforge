@@ -5,3 +5,10 @@ __pycache__/
 build/
 reports/
 .hermes_progress*.json
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
