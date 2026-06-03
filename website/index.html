@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SentinelForge — Local-first security scans for AI-built software</title>
+  <meta name="description" content="SentinelForge is a local-first security scanning CLI for developers, solo founders, and small teams shipping AI-built software." />
+  <meta property="og:title" content="SentinelForge" />
+  <meta property="og:description" content="Local-first security scans, release-readiness grades, and practical fix guidance for AI-built software." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sentinel-forge.org" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #171717;
+      --muted: #555555;
+      --soft: #777777;
+      --line: rgba(0, 0, 0, 0.08);
+      --surface: #fafafa;
+      --blue: #0969da;
+      --green: #1a7f37;
+      --yellow: #9a6700;
+      --red: #cf222e;
+      --shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px, rgba(0,0,0,0.04) 0px 8px 8px -8px, #fafafa 0px 0px 0px 1px;
+      --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+      --sans: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-feature-settings: "liga";
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: var(--blue); }
+
+    .wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: rgba(255,255,255,0.82);
+      box-shadow: rgba(0,0,0,0.08) 0px 1px 0px;
+    }
+
+    .nav {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.3px; }
+    .logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: #171717;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-family: var(--mono);
+      font-size: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .links { display: flex; align-items: center; gap: 22px; font-size: 14px; color: var(--muted); font-weight: 500; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+      white-space: nowrap;
+    }
+    .button.dark { color: white; background: #171717; box-shadow: rgba(0,0,0,0.16) 0px 1px 2px; }
+    .button.light { color: #171717; background: white; box-shadow: rgb(235,235,235) 0px 0px 0px 1px; }
+    .button:hover { transform: translateY(-1px); color: inherit; }
+
+    main { overflow: hidden; }
+    .hero {
+      position: relative;
+      padding: 92px 0 70px;
+      text-align: center;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -180px -160px auto;
+      height: 390px;
+      background:
+        radial-gradient(circle at 22% 30%, rgba(9,105,218,.18), transparent 32%),
+        radial-gradient(circle at 58% 16%, rgba(26,127,55,.13), transparent 30%),
+        radial-gradient(circle at 78% 40%, rgba(207,34,46,.10), transparent 28%);
+      filter: blur(22px);
+      pointer-events: none;
+    }
+    .hero > .wrap { position: relative; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 28px;
+      padding: 0 11px;
+      border-radius: 999px;
+      background: #f6f8fa;
+      box-shadow: rgb(208,215,222) 0px 0px 0px 1px;
+      color: #57606a;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--green); box-shadow: 0 0 0 3px rgba(26,127,55,.12); }
+
+    h1 {
+      margin: 0 auto;
+      max-width: 860px;
+      font-size: clamp(44px, 7vw, 76px);
+      line-height: .96;
+      letter-spacing: clamp(-3.6px, -0.055em, -2px);
+      font-weight: 600;
+    }
+    .subtitle {
+      max-width: 710px;
+      margin: 26px auto 0;
+      color: var(--muted);
+      font-size: clamp(18px, 2vw, 21px);
+      line-height: 1.65;
+      letter-spacing: -0.15px;
+    }
+    .cta { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+
+    .terminal {
+      margin: 54px auto 0;
+      max-width: 760px;
+      text-align: left;
+      border-radius: 12px;
+      background: #0d1117;
+      color: #c9d1d9;
+      box-shadow: rgba(0,0,0,0.20) 0px 20px 70px -30px, rgba(0,0,0,0.25) 0px 0px 0px 1px;
+      overflow: hidden;
+    }
+    .terminal-top {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 16px;
+      background: #161b22;
+      box-shadow: rgba(255,255,255,.08) 0px -1px 0px inset;
+    }
+    .orb { width: 11px; height: 11px; border-radius: 50%; background: #ff5f56; }
+    .orb:nth-child(2) { background: #ffbd2e; }
+    .orb:nth-child(3) { background: #27c93f; }
+    pre { margin: 0; padding: 22px; overflow-x: auto; font-family: var(--mono); font-size: 14px; line-height: 1.8; }
+    .comment { color: #8b949e; }
+    .ok { color: #3fb950; }
+    .blue { color: #79c0ff; }
+
+    section { padding: 74px 0; box-shadow: rgba(0,0,0,0.08) 0px -1px 0px; }
+    .section-head { max-width: 720px; margin-bottom: 28px; }
+    .eyebrow { font-family: var(--mono); text-transform: uppercase; color: #57606a; font-size: 12px; letter-spacing: .04em; font-weight: 600; margin-bottom: 12px; }
+    h2 { margin: 0; font-size: clamp(32px, 4vw, 48px); line-height: 1.05; letter-spacing: -2.2px; font-weight: 600; }
+    .section-copy { margin: 16px 0 0; color: var(--muted); font-size: 18px; line-height: 1.7; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      min-height: 190px;
+    }
+    .icon {
+      width: 38px; height: 38px; border-radius: 9px;
+      display: grid; place-items: center;
+      font-family: var(--mono);
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 18px;
+      background: #f6f8fa;
+      box-shadow: rgb(208,215,222) 0px 0px 0px 1px;
+    }
+    .card h3 { margin: 0; font-size: 21px; line-height: 1.25; letter-spacing: -0.7px; font-weight: 600; }
+    .card p { margin: 12px 0 0; color: var(--muted); line-height: 1.62; font-size: 15.5px; }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+    .panel {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .list { display: grid; gap: 14px; margin: 22px 0 0; padding: 0; list-style: none; }
+    .list li { display: flex; gap: 12px; color: var(--muted); line-height: 1.55; }
+    .check { color: var(--green); font-weight: 600; flex: 0 0 auto; }
+
+    .grade {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 18px;
+      align-items: center;
+      margin-top: 20px;
+      padding: 18px;
+      background: #f6f8fa;
+      border-radius: 10px;
+      box-shadow: rgb(208,215,222) 0px 0px 0px 1px;
+    }
+    .score {
+      height: 86px; width: 86px; border-radius: 18px;
+      display: grid; place-items: center;
+      color: #fff; background: #1a7f37;
+      font-size: 34px; font-weight: 600; letter-spacing: -1.4px;
+      box-shadow: rgba(26,127,55,.22) 0px 12px 28px;
+    }
+    .grade p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+    .pricing-note {
+      border-radius: 14px;
+      padding: 30px;
+      background: linear-gradient(180deg, #fff, #f6f8fa);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .pricing-note h2 { font-size: clamp(30px, 4vw, 44px); }
+    .pricing-note p { margin: 12px 0 0; color: var(--muted); line-height: 1.65; max-width: 700px; }
+
+    footer {
+      padding: 34px 0 46px;
+      color: #57606a;
+      font-size: 14px;
+      box-shadow: rgba(0,0,0,0.08) 0px -1px 0px;
+    }
+    .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .foot a { color: #0969da; }
+
+    @media (max-width: 860px) {
+      .links a:not(.button) { display: none; }
+      .grid, .split { grid-template-columns: 1fr; }
+      .hero { padding-top: 72px; }
+      .pricing-note { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 520px) {
+      .wrap { width: min(100% - 24px, 1120px); }
+      .nav { height: 58px; }
+      .brand span { display: none; }
+      .terminal { margin-top: 38px; }
+      pre { font-size: 12.5px; padding: 18px; }
+      .grade { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="SentinelForge home">
+        <div class="logo">SF</div>
+        <span>SentinelForge</span>
+      </a>
+      <nav class="links" aria-label="Main navigation">
+        <a href="#overview">Overview</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#license">License</a>
+        <a class="button dark" href="https://github.com/CrampsP/sentinelforge">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap">
+        <div class="badge"><span class="dot"></span> Local-first security scanning for developers</div>
+        <h1>Security checks for software built fast.</h1>
+        <p class="subtitle">SentinelForge is a command-line security scanner that helps solo founders, freelancers, and small teams find risky code patterns, generate clear reports, and decide if a project is ready to ship.</p>
+        <div class="cta">
+          <a class="button dark" href="https://github.com/CrampsP/sentinelforge/releases/tag/v1.5.1">Download latest release</a>
+          <a class="button light" href="mailto:support@sentinel-forge.org">Contact support</a>
+        </div>
+        <div class="terminal" aria-label="Example SentinelForge command output">
+          <div class="terminal-top"><span class="orb"></span><span class="orb"></span><span class="orb"></span></div>
+<pre><span class="comment"># Run a local static scan</span>
+$ sentinelforge scan --target . --mode static
+
+<span class="ok">✓</span> Findings normalized
+<span class="ok">✓</span> Report generated
+<span class="blue">Grade:</span> A
+<span class="blue">Decision:</span> Review high-risk items before release</pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="overview">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Overview</div>
+          <h2>A practical security gate for AI-era builders.</h2>
+          <p class="section-copy">AI tools make it easier to ship software quickly. SentinelForge adds a lightweight security review step before that code reaches users.</p>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <div class="icon">01</div>
+            <h3>Local by default</h3>
+            <p>Run scans on your own machine or server. Your source code does not need to be uploaded to a hosted scanner.</p>
+          </article>
+          <article class="card">
+            <div class="icon">02</div>
+            <h3>Clear reports</h3>
+            <p>Get beginner-friendly findings, severity levels, a release-readiness grade, and prioritized fix guidance.</p>
+          </article>
+          <article class="card">
+            <div class="icon">03</div>
+            <h3>Built for small teams</h3>
+            <p>Designed for freelancers, solo founders, and developers who need a quick security pass without enterprise complexity.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works">
+      <div class="wrap split">
+        <div class="panel">
+          <div class="eyebrow">How it works</div>
+          <h2>Scan, review, fix, retest.</h2>
+          <ul class="list">
+            <li><span class="check">✓</span><span>Run SentinelForge against a local project folder.</span></li>
+            <li><span class="check">✓</span><span>Review normalized findings with plain-English explanations.</span></li>
+            <li><span class="check">✓</span><span>Use the fix plan to address high-risk issues first.</span></li>
+            <li><span class="check">✓</span><span>Retest before shipping or handing the project to a client.</span></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="eyebrow">Output</div>
+          <h2>Reports that are easy to act on.</h2>
+          <div class="grade">
+            <div class="score">A</div>
+            <p>SentinelForge summarizes risk with a grade, score, top findings, fix order, retest steps, and CI/CD gate guidance.</p>
+          </div>
+          <ul class="list">
+            <li><span class="check">✓</span><span>Static code and configuration review</span></li>
+            <li><span class="check">✓</span><span>Security report files for sharing and follow-up</span></li>
+            <li><span class="check">✓</span><span>Machine-readable JSON output for automation</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="license">
+      <div class="wrap">
+        <div class="pricing-note">
+          <div>
+            <div class="eyebrow">Access model</div>
+            <h2>Try one real local scan first.</h2>
+            <p>SentinelForge includes free trust commands and one full local scan trial. Continued scans require license activation. License requests and support are handled through support@sentinel-forge.org.</p>
+          </div>
+          <a class="button dark" href="mailto:support@sentinel-forge.org?subject=SentinelForge%20license%20request">Request a license</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div>© 2026 SentinelForge. Local-first security tooling.</div>
+      <div>
+        <a href="mailto:support@sentinel-forge.org">support@sentinel-forge.org</a>
+        · <a href="https://github.com/CrampsP/sentinelforge">GitHub</a>
+        · Refund requests: contact support within 7 days
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
