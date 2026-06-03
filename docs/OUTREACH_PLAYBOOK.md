@@ -1,16 +1,12 @@
 # SentinelForge First-Customer Outreach Plan
 
-Goal: get the first paid Security Baseline Review customer.
+Goal: get the first Security Baseline Review customer.
 
 ## Best first offer
 
 Before you ship AI-written or client code, get a plain-English SentinelForge Security Baseline Review.
 
-Beta pricing:
-
-- Mini review: $49
-- Standard review: $149
-- Review + GitHub Actions setup: $499
+Keep public pricing off the repo. Discuss scope and payment privately after the person shows interest.
 
 ## Best first customers
 
@@ -64,7 +60,7 @@ Hey — I found your project while looking for small apps that might benefit fro
 
 I built SentinelForge, a local-first security release checker that scans for common issues like leaked secrets, risky API routes, outdated dependencies, unsafe AI app patterns, and Docker/config problems. It gives a plain-English report and a release-readiness grade.
 
-I’m offering a few beta Security Baseline Reviews for $49 while I validate the product. No pressure at all — would a plain-English pre-launch security report be useful for this project?
+I’m offering a few beta Security Baseline Reviews while I validate the product. No pressure at all — would a plain-English pre-launch security report be useful for this project?
 ```
 
 ## GitHub issue comment rule
@@ -121,5 +117,5 @@ Statuses:
 ```text
 Awesome. For the beta mini-review, I’ll run SentinelForge on the project you authorize, review the results, and give you a plain-English summary with the top risks and what to fix first.
 
-The beta price is $49. Please do not send secrets or private credentials. If the repo is private, we can work out a safe way to review only what you authorize.
+Please do not send secrets or private credentials. If the repo is private, we can work out a safe way to review only what you authorize.
 ```

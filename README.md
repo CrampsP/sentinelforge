@@ -125,9 +125,9 @@ Decision: Do Not Ship
 Top risks: shell command execution, suspected hardcoded secret, debug mode, outdated dependencies, risky Docker settings
 ```
 
-## Paid security baseline reviews
+## Security baseline reviews
 
-SentinelForge is free to use. If you want help applying it to your own app, client project, or AI-built codebase, paid Security Baseline Reviews are available.
+SentinelForge can be used locally as a first-pass security release checker. If you want help applying it to your own app, client project, or AI-built codebase, Security Baseline Reviews may be available by request.
 
 Good for:
 
@@ -146,12 +146,6 @@ A review can include:
 - Release-readiness grade
 - Optional GitHub Actions setup
 - Optional walkthrough explaining the report
-
-Starter beta offer:
-
-- Mini review: $49
-- Standard review: $149
-- Review + GitHub Actions setup: $499
 
 To request one, open a GitHub issue using the “Security Baseline Review Request” template.
 

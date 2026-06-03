@@ -1,5 +1,5 @@
 name: Security Baseline Review Request
-description: Request a paid or beta SentinelForge security baseline review for your app or client project.
+description: Request a SentinelForge security baseline review for your app or client project.
 title: "Security Baseline Review Request: <short project name>"
 labels: ["security-review", "paid-support"]
 body:
@@ -15,9 +15,9 @@ body:
     attributes:
       label: What kind of review are you interested in?
       options:
-        - Mini review ($49 beta)
-        - Standard review ($149 beta)
-        - Review + GitHub Actions setup ($499 beta)
+        - Lightweight first-pass review
+        - Standard baseline review
+        - Review + GitHub Actions setup
         - Not sure yet
     validations:
       required: true
