@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 from sentinelforge.models import Finding, Location
 from sentinelforge.redaction import redact_text
+from sentinelforge.scan_config import should_skip_file
 
 SECRET_REGEXES = [
     (re.compile(r"sk_live_[A-Za-z0-9_.\-]{8,}"), "Live API key"),
@@ -19,7 +20,7 @@ def scan(target: Path) -> list[Finding]:
     findings: list[Finding] = []
     idx = 1
     for path in target.rglob('*'):
-        if not path.is_file() or any(part in SKIP_DIRS for part in path.parts):
+        if not path.is_file() or should_skip_file(target, path):
             continue
         try:
             lines = path.read_text(errors='ignore').splitlines()

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from sentinelforge.models import Finding, Location
+from sentinelforge.scan_config import should_skip_file
 
 RISKY_PACKAGES = {
     "django": ("1.", "Outdated Django major version may contain known security issues."),
@@ -29,6 +30,8 @@ def scan(target: Path) -> list[Finding]:
     findings: list[Finding] = []
     idx = 1
     for req in target.rglob('requirements.txt'):
+        if should_skip_file(target, req):
+            continue
         for line in req.read_text(errors='ignore').splitlines():
             stripped = line.strip()
             if '==' not in stripped or stripped.startswith('#'):
@@ -38,6 +41,8 @@ def scan(target: Path) -> list[Finding]:
             if lower in RISKY_PACKAGES and version.startswith(RISKY_PACKAGES[lower][0]):
                 findings.append(_finding(idx, lower, version, req, RISKY_PACKAGES[lower][1])); idx += 1
     for pkgjson in target.rglob('package.json'):
+        if should_skip_file(target, pkgjson):
+            continue
         try:
             data = json.loads(pkgjson.read_text(errors='ignore'))
         except json.JSONDecodeError:

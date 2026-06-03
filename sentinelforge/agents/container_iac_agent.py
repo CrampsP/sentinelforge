@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from sentinelforge.models import Finding, Location
+from sentinelforge.scan_config import should_skip_file
 
 
 def scan(target: Path) -> list[Finding]:
@@ -9,6 +10,8 @@ def scan(target: Path) -> list[Finding]:
     idx = 1
     dockerfiles = list(target.rglob('Dockerfile')) + list(target.rglob('*.Dockerfile'))
     for dockerfile in dockerfiles:
+        if should_skip_file(target, dockerfile):
+            continue
         lines = dockerfile.read_text(errors='ignore').splitlines()
         has_user = any(line.strip().upper().startswith('USER ') for line in lines)
         for line_no, line in enumerate(lines, start=1):
@@ -20,6 +23,8 @@ def scan(target: Path) -> list[Finding]:
         if not has_user:
             findings.append(_iac(idx, "Container may run as root because no USER is set", "low", dockerfile, 1, "No USER directive found")); idx += 1
     for compose in list(target.rglob('docker-compose.yml')) + list(target.rglob('docker-compose.yaml')):
+        if should_skip_file(target, compose):
+            continue
         lines = compose.read_text(errors='ignore').splitlines()
         for line_no, line in enumerate(lines, start=1):
             if 'privileged: true' in line:

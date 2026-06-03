@@ -5,7 +5,7 @@ import typer
 
 from .doctor import check_tools, format_doctor_report
 from .gate import evaluate_gate
-from .scanner import run_static_scan
+from .scanner import run_scan
 
 app = typer.Typer(help="SentinelForge security scanner and risk grader.", invoke_without_command=False)
 
@@ -18,13 +18,24 @@ def main():
 @app.command()
 def scan(
     target: str = typer.Option(..., "--target", help="Path to the authorized target repository."),
-    mode: str = typer.Option("static", "--mode", help="Scan mode. v0.1 supports static only."),
+    mode: str = typer.Option("static", "--mode", help="Scan mode: static or standard."),
     output_dir: str = typer.Option("reports", "--output-dir", help="Directory for reports."),
+    url: str | None = typer.Option(None, "--url", help="Local/staging URL for safe standard-mode baseline checks."),
+    i_am_authorized: bool = typer.Option(False, "--i-am-authorized", help="Confirm you are authorized to scan the URL target."),
+    allow_public_target: bool = typer.Option(False, "--allow-public-target", help="Allow authorized public URL dynamic scans."),
 ):
     """Run an authorized SentinelForge scan."""
-    if mode != "static":
-        raise typer.BadParameter("SentinelForge v0.1 only supports --mode static")
-    report, md_path, json_path = run_static_scan(Path(target), Path(output_dir))
+    try:
+        report, md_path, json_path = run_scan(
+            Path(target),
+            Path(output_dir),
+            mode=mode,
+            url=url,
+            i_am_authorized=i_am_authorized,
+            allow_public_target=allow_public_target,
+        )
+    except PermissionError as exc:
+        raise typer.BadParameter(str(exc)) from exc
     typer.echo(f"SentinelForge scan complete: grade {report.summary.grade}, score {report.summary.score}")
     typer.echo(f"Markdown report: {md_path}")
     typer.echo(f"JSON report: {json_path}")

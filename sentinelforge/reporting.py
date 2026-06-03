@@ -56,7 +56,9 @@ def write_markdown_report(report: SecurityReport, json_path: Path, output_dir: s
 
 ## 1. Executive Summary
 
-SentinelForge scanned `{report.target}` in `{report.scan_mode}` mode. No report can prove software is perfectly secure, but this scan shows what the configured tools detected.
+SentinelForge v{report.sentinelforge_version} scanned `{report.target}` in `{report.scan_mode}` mode. No report can prove software is perfectly secure, but this scan shows what the configured tools detected.
+
+Security standards mapped in this report: {", ".join(report.security_standards)}.
 
 ## 2. Final Grade
 

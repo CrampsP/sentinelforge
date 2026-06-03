@@ -59,6 +59,13 @@ class ScanSummary(BaseModel):
 
 
 class SecurityReport(BaseModel):
+    sentinelforge_version: str = "1.0.0"
+    security_standards: list[str] = Field(default_factory=lambda: [
+        "OWASP Top 10 2025",
+        "OWASP API Security Top 10 2023",
+        "OWASP LLM Top 10 2.0",
+        "CISA Known Exploited Vulnerabilities Catalog",
+    ])
     target: str
     scan_mode: str
     scan_started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

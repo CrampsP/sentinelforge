@@ -4,23 +4,40 @@ SentinelForge is an authorized DevSecOps security scanner and risk grader for so
 
 ## Safety Rules
 
-SentinelForge v0.1 only scans local directories. It does not perform dynamic attacks, exploit chains, credential theft, persistence, lateral movement, denial-of-service testing, or production scanning.
+SentinelForge v1.0 blocks public dynamic scans by default and only allows low-impact local/staging baseline checks. It does not perform exploit chains, credential theft, persistence, lateral movement, denial-of-service testing, destructive payloads, or production scanning without explicit authorization flags.
 
-## Version 0.1
+## Version 1.0
 
-The first version provides a static MVP:
+SentinelForge v1.0 provides a safe, authorized security audit baseline:
 
 - Static code pattern checks
 - Dependency risk checks
 - Secrets detection with redaction
 - Docker/IaC misconfiguration checks
+- Safe local/staging dynamic baseline checks in `standard` mode
+- Authorization guardrails for URL targets
+- OWASP Top 10 2025, OWASP API Top 10 2023, OWASP LLM Top 10 2.0, and CISA KEV-aware reporting structure
 - Risk score and A+ to F grade
 - Markdown and JSON reports
 
 ## Run
 
+SentinelForge v1.0 defaults to static local repository scans.
+
 ```bash
 sentinelforge scan --target ./my-app --mode static
+```
+
+For a local or explicitly authorized staging web app, run the safe standard baseline:
+
+```bash
+sentinelforge scan --target ./my-app --mode standard --url http://localhost:3000
+```
+
+Public URL dynamic scans are blocked unless you explicitly confirm authorization:
+
+```bash
+sentinelforge scan --target ./my-app --mode standard --url https://staging.example.com --i-am-authorized --allow-public-target
 ```
 
 Reports are written to:

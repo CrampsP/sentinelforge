@@ -9,6 +9,8 @@ from .models import SecurityReport
 from .normalization import deduplicate_findings
 from .reporting import write_reports
 from .scoring import score_findings
+from .dynamic import run_safe_dynamic_baseline
+from .targeting import validate_dynamic_target
 
 SCANNER_TOOLS = {
     "semgrep": "Install Semgrep: python -m pip install semgrep or see https://semgrep.dev/docs/getting-started/",
@@ -20,9 +22,23 @@ SCANNER_TOOLS = {
 
 
 def run_static_scan(target: Path, output_dir: Path = Path("reports")) -> tuple[SecurityReport, Path, Path]:
+    return run_scan(target=target, output_dir=output_dir, mode="static")
+
+
+def run_scan(
+    target: Path,
+    output_dir: Path = Path("reports"),
+    *,
+    mode: str = "static",
+    url: str | None = None,
+    i_am_authorized: bool = False,
+    allow_public_target: bool = False,
+) -> tuple[SecurityReport, Path, Path]:
     target = target.resolve()
     if not target.exists() or not target.is_dir():
         raise FileNotFoundError(f"Target directory does not exist: {target}")
+    if mode not in {"static", "standard"}:
+        raise ValueError("SentinelForge v1.0 supports --mode static and --mode standard")
 
     started = datetime.now(timezone.utc)
     findings = []
@@ -30,6 +46,12 @@ def run_static_scan(target: Path, output_dir: Path = Path("reports")) -> tuple[S
     findings.extend(dependency_agent.scan(target))
     findings.extend(secrets_agent.scan(target))
     findings.extend(container_iac_agent.scan(target))
+
+    if mode == "standard" and url:
+        decision = validate_dynamic_target(url, i_am_authorized=i_am_authorized, allow_public_target=allow_public_target)
+        if not decision.allowed:
+            raise PermissionError(decision.reason)
+        findings.extend(run_safe_dynamic_baseline(url))
 
     tools_run: list[str] = []
     tools_missing: list[str] = []
@@ -45,7 +67,7 @@ def run_static_scan(target: Path, output_dir: Path = Path("reports")) -> tuple[S
     findings = deduplicate_findings(findings)
     summary = score_findings(findings)
     report = SecurityReport(
-        target=str(target), scan_mode="static", scan_started_at=started,
+        target=str(target), scan_mode=mode, scan_started_at=started,
         scan_finished_at=datetime.now(timezone.utc), summary=summary, tools_run=tools_run,
         tools_missing=tools_missing, findings=findings,
         blue_team_checklist=blue_team_agent.blue_team_checklist(target),

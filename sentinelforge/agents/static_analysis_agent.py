@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from sentinelforge.models import Finding, Location
+from sentinelforge.scan_config import should_skip_file
 
 CODE_EXTS = {'.py', '.js', '.ts', '.tsx', '.jsx', '.go', '.rb', '.php'}
 
@@ -40,7 +41,7 @@ def scan(target: Path) -> list[Finding]:
     ]
     idx = 1
     for path in target.rglob('*'):
-        if not path.is_file() or path.suffix not in CODE_EXTS or any(part in {'.git', 'node_modules', '.venv'} for part in path.parts):
+        if not path.is_file() or path.suffix not in CODE_EXTS or should_skip_file(target, path):
             continue
         try:
             lines = path.read_text(errors='ignore').splitlines()
@@ -48,6 +49,8 @@ def scan(target: Path) -> list[Finding]:
             continue
         for line_no, line in enumerate(lines, start=1):
             for regex, title, severity, cwe in patterns:
+                if "re.compile(" in line:
+                    continue
                 if regex.search(line):
                     findings.append(_finding(f"SF-STATIC-{idx:04d}", title, severity, path, line_no, line, cwe=cwe))
                     idx += 1
