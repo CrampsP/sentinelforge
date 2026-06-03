@@ -6,6 +6,9 @@ import typer
 from .doctor import check_tools, format_doctor_report
 from .gate import evaluate_gate
 from .scanner import run_scan
+from .policy import write_policy
+from .ci import write_github_actions
+from .explain import explain_finding
 
 app = typer.Typer(help="SentinelForge security scanner and risk grader.", invoke_without_command=False)
 
@@ -23,22 +26,50 @@ def scan(
     url: str | None = typer.Option(None, "--url", help="Local/staging URL for safe standard-mode baseline checks."),
     i_am_authorized: bool = typer.Option(False, "--i-am-authorized", help="Confirm you are authorized to scan the URL target."),
     allow_public_target: bool = typer.Option(False, "--allow-public-target", help="Allow authorized public URL dynamic scans."),
+    policy: str | None = typer.Option(None, "--policy", help="Optional SentinelForge policy YAML."),
+    use_kev: bool = typer.Option(False, "--use-kev", help="Try to enrich CVEs with CISA known-exploited data."),
 ):
     """Run an authorized SentinelForge scan."""
     try:
         report, md_path, json_path = run_scan(
-            Path(target),
-            Path(output_dir),
-            mode=mode,
-            url=url,
-            i_am_authorized=i_am_authorized,
-            allow_public_target=allow_public_target,
+            Path(target), Path(output_dir), mode=mode, url=url,
+            i_am_authorized=i_am_authorized, allow_public_target=allow_public_target,
+            policy_path=policy, use_kev=use_kev,
         )
     except PermissionError as exc:
         raise typer.BadParameter(str(exc)) from exc
     typer.echo(f"SentinelForge scan complete: grade {report.summary.grade}, score {report.summary.score}")
     typer.echo(f"Markdown report: {md_path}")
     typer.echo(f"JSON report: {json_path}")
+    typer.echo(f"HTML report: {Path(md_path).with_name('latest_report.html')}")
+
+
+@app.command("init-policy")
+def init_policy(
+    template: str = typer.Option("ai-app", "--template", help="Policy template name."),
+    output: str = typer.Option("sentinelforge.policy.yaml", "--output", help="Where to write the policy file."),
+):
+    """Create a starter policy file."""
+    path = write_policy(output, template)
+    typer.echo(f"Created policy file: {path}")
+
+
+@app.command("init-ci")
+def init_ci(
+    output_dir: str = typer.Option(".github/workflows", "--output-dir", help="Where to create the GitHub Actions workflow."),
+):
+    """Create a GitHub Actions workflow that runs SentinelForge."""
+    path = write_github_actions(output_dir)
+    typer.echo(f"Created GitHub Actions workflow: {path}")
+
+
+@app.command()
+def explain(
+    report: str = typer.Option(..., "--report", help="Path to SentinelForge JSON report."),
+    finding_id: str = typer.Option(..., "--finding-id", help="Finding ID to explain."),
+):
+    """Explain one finding in very plain English."""
+    typer.echo(explain_finding(report, finding_id))
 
 
 @app.command()

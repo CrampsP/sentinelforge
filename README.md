@@ -1,20 +1,32 @@
 # SentinelForge
 
-SentinelForge is an authorized DevSecOps security scanner and risk grader for software you own or are explicitly allowed to test.
+SentinelForge is a beginner-friendly security scanner for software you own or are clearly allowed to test.
+
+If you know almost nothing about computers, start here:
+
+- Read `BEGINNER_GUIDE.md`
+- Run `sentinelforge doctor`
+- Run `sentinelforge scan --target ./your-app --mode static`
+- Open `reports/latest_report.md`
 
 ## Safety Rules
 
 SentinelForge v1.0 blocks public dynamic scans by default and only allows low-impact local/staging baseline checks. It does not perform exploit chains, credential theft, persistence, lateral movement, denial-of-service testing, destructive payloads, or production scanning without explicit authorization flags.
 
-## Version 1.0
+## Version 1.5
 
-SentinelForge v1.0 provides a safe, authorized security audit baseline:
+SentinelForge v1.5 provides a packaged, beginner-friendly security audit baseline:
 
 - Static code pattern checks
 - Dependency risk checks
 - Secrets detection with redaction
 - Docker/IaC misconfiguration checks
 - Safe local/staging dynamic baseline checks in `standard` mode
+- AI/LLM app security checks
+- API route inventory checks
+- CISA KEV known-exploited enrichment support
+- Policy files, suppression files, GitHub Actions setup, plain-English explanations
+- HTML, Markdown, JSON, and badge report outputs
 - Authorization guardrails for URL targets
 - OWASP Top 10 2025, OWASP API Top 10 2023, OWASP LLM Top 10 2.0, and CISA KEV-aware reporting structure
 - Risk score and A+ to F grade

@@ -35,6 +35,8 @@ def automatic_fail_reasons(findings: list[Finding]) -> list[str]:
     reasons: list[str] = []
     for f in findings:
         text = f"{f.title} {f.category} {f.description} {f.impact}".lower()
+        if getattr(f, "known_exploited", False):
+            reasons.append(f"Known exploited vulnerability: {f.title}")
         if _is_secret(f) and f.status != "false_positive":
             reasons.append(f"Real or suspected hardcoded secret: {f.title}")
         if "auth bypass" in text or "unauthenticated admin" in text:

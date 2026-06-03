@@ -5,12 +5,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .agents import static_analysis_agent, dependency_agent, secrets_agent, container_iac_agent, blue_team_agent
+from .agents import ai_app_agent, route_inventory_agent
 from .models import SecurityReport
 from .normalization import deduplicate_findings
 from .reporting import write_reports
 from .scoring import score_findings
 from .dynamic import run_safe_dynamic_baseline
 from .targeting import validate_dynamic_target
+from .kev import enrich_with_kev, load_kev_cache
+from .suppression import apply_suppressions, load_suppressions
+from .policy import load_policy
 
 SCANNER_TOOLS = {
     "semgrep": "Install Semgrep: python -m pip install semgrep or see https://semgrep.dev/docs/getting-started/",
@@ -33,19 +37,26 @@ def run_scan(
     url: str | None = None,
     i_am_authorized: bool = False,
     allow_public_target: bool = False,
+    policy_path: str | Path | None = None,
+    suppression_path: str | Path | None = None,
+    kev_path: str | Path | None = None,
+    use_kev: bool = False,
 ) -> tuple[SecurityReport, Path, Path]:
     target = target.resolve()
     if not target.exists() or not target.is_dir():
         raise FileNotFoundError(f"Target directory does not exist: {target}")
     if mode not in {"static", "standard"}:
-        raise ValueError("SentinelForge v1.0 supports --mode static and --mode standard")
+        raise ValueError("SentinelForge v1.5 supports --mode static and --mode standard")
 
+    policy = load_policy(policy_path)
     started = datetime.now(timezone.utc)
     findings = []
     findings.extend(static_analysis_agent.scan(target))
     findings.extend(dependency_agent.scan(target))
     findings.extend(secrets_agent.scan(target))
     findings.extend(container_iac_agent.scan(target))
+    findings.extend(ai_app_agent.scan(target))
+    findings.extend(route_inventory_agent.scan(target))
 
     if mode == "standard" and url:
         decision = validate_dynamic_target(url, i_am_authorized=i_am_authorized, allow_public_target=allow_public_target)
@@ -65,6 +76,13 @@ def run_scan(
             tool_idx += 1
 
     findings = deduplicate_findings(findings)
+    if use_kev:
+        try:
+            findings = enrich_with_kev(findings, load_kev_cache(kev_path))
+        except Exception:
+            pass
+    suppress_file = Path(suppression_path) if suppression_path else target / ".sentinelforgeignore"
+    findings = apply_suppressions(findings, load_suppressions(suppress_file))
     summary = score_findings(findings)
     report = SecurityReport(
         target=str(target), scan_mode=mode, scan_started_at=started,

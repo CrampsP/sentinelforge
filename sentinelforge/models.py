@@ -39,6 +39,9 @@ class Finding(BaseModel):
     safe_fix_suggestion: str | None = None
     references: list[str] = Field(default_factory=list)
     retest_steps: list[str] = Field(default_factory=list)
+    known_exploited: bool = False
+    safe_to_auto_fix: bool = False
+    suppression_reason: str | None = None
 
 
 class ToolResult(BaseModel):
@@ -59,7 +62,7 @@ class ScanSummary(BaseModel):
 
 
 class SecurityReport(BaseModel):
-    sentinelforge_version: str = "1.0.0"
+    sentinelforge_version: str = "1.5.0"
     security_standards: list[str] = Field(default_factory=lambda: [
         "OWASP Top 10 2025",
         "OWASP API Security Top 10 2023",
