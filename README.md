@@ -1,21 +1,22 @@
 # SentinelForge
 
-SentinelForge is a beginner-friendly security scanner for software you own or are clearly allowed to test.
+SentinelForge is a local-first security release checker for software you own or are clearly allowed to test.
 
-If you know almost nothing about computers, start here:
+It helps solo builders, freelancers, AI app developers, and small teams catch common security mistakes before shipping code.
 
-- Read `BEGINNER_GUIDE.md`
-- Run `sentinelforge doctor`
-- Run `sentinelforge scan --target ./your-app --mode static`
-- Open `reports/latest_report.md`
+It does not prove an app is perfectly secure. It gives you a practical first-pass security baseline, a risk score, and a plain-English report.
 
-## Safety Rules
+## Who this is for
 
-SentinelForge v1.0 blocks public dynamic scans by default and only allows low-impact local/staging baseline checks. It does not perform exploit chains, credential theft, persistence, lateral movement, denial-of-service testing, destructive payloads, or production scanning without explicit authorization flags.
+- Solo founders shipping MVPs
+- Freelancers handing projects to clients
+- AI app builders using tools like Cursor, Claude Code, Replit, Lovable, Bolt, Windsurf, or Copilot
+- Small agencies that want a lightweight client handoff check
+- Small teams that want a simple CI security gate before launch
 
-## Version 1.5
+## What SentinelForge checks
 
-SentinelForge v1.5 provides a packaged, beginner-friendly security audit baseline:
+SentinelForge v1.5 includes:
 
 - Static code pattern checks
 - Dependency risk checks
@@ -25,22 +26,69 @@ SentinelForge v1.5 provides a packaged, beginner-friendly security audit baselin
 - AI/LLM app security checks
 - API route inventory checks
 - CISA KEV known-exploited enrichment support
-- Policy files, suppression files, GitHub Actions setup, plain-English explanations
+- Policy files and suppression files
+- GitHub Actions setup helper
+- Plain-English finding explanations
 - HTML, Markdown, JSON, and badge report outputs
 - Authorization guardrails for URL targets
 - OWASP Top 10 2025, OWASP API Top 10 2023, OWASP LLM Top 10 2.0, and CISA KEV-aware reporting structure
 - Risk score and A+ to F grade
-- Markdown and JSON reports
+
+## Beginner start
+
+If you know almost nothing about computers, start here:
+
+1. Read `BEGINNER_GUIDE.md`
+2. Install the package from the GitHub release
+3. Run this command:
+
+```bash
+sentinelforge doctor
+```
+
+4. Scan a project you own:
+
+```bash
+sentinelforge scan --target ./your-app --mode static
+```
+
+5. Open the report:
+
+```text
+reports/latest_report.md
+```
+
+## Install
+
+Download the latest wheel from the GitHub Releases page, then install it with `pipx` or `uv tool install`.
+
+Example with `pipx`:
+
+```bash
+pipx install ./sentinelforge-1.5.0-py3-none-any.whl
+```
+
+Example with `uv`:
+
+```bash
+uv tool install ./sentinelforge-1.5.0-py3-none-any.whl
+```
+
+Full beginner install instructions are in:
+
+```text
+INSTALL_SENTINELFORGE_v1.5.md
+```
 
 ## Run
 
-SentinelForge v1.0 defaults to static local repository scans.
+Static local repository scan:
 
 ```bash
 sentinelforge scan --target ./my-app --mode static
 ```
 
-For a local or explicitly authorized staging web app, run the safe standard baseline:
+Safe local or explicitly authorized staging baseline:
 
 ```bash
 sentinelforge scan --target ./my-app --mode standard --url http://localhost:3000
@@ -56,21 +104,109 @@ Reports are written to:
 
 - `reports/latest_report.md`
 - `reports/latest_report.json`
+- `reports/latest_report.html`
 
-## Program Core + Agent Layer
+## Sample report
 
-SentinelForge is designed as a reliable program first, with an agentic analyst layer on top.
+Want to see what a report looks like before installing?
 
-The program core enforces safety, scanner execution, schema normalization, redaction, scoring, reports, and CI gates.
+Read:
 
-The agent layer explains findings, prioritizes fixes, reviews AI-specific risks, and suggests safe remediation. It must not override program safety controls.
+```text
+docs/SAMPLE_SECURITY_BASELINE_REPORT.md
+```
 
-## Useful Commands
+Short example result:
+
+```text
+Score: 11.75 / 100
+Grade: F
+Decision: Do Not Ship
+Top risks: shell command execution, suspected hardcoded secret, debug mode, outdated dependencies, risky Docker settings
+```
+
+## Paid security baseline reviews
+
+SentinelForge is free to use. If you want help applying it to your own app, client project, or AI-built codebase, paid Security Baseline Reviews are available.
+
+Good for:
+
+- AI-built apps before launch
+- Freelance/client handoff reports
+- MVPs before public release
+- Small SaaS projects
+- Automation projects using API keys, webhooks, databases, or AI tools
+
+A review can include:
+
+- SentinelForge scan
+- Plain-English executive summary
+- Top risks and what they mean
+- Fix checklist
+- Release-readiness grade
+- Optional GitHub Actions setup
+- Optional walkthrough explaining the report
+
+Starter beta offer:
+
+- Mini review: $49
+- Standard review: $149
+- Review + GitHub Actions setup: $499
+
+To request one, open a GitHub issue using the “Security Baseline Review Request” template.
+
+Important: do not paste private code, passwords, API keys, tokens, `.env` files, or confidential client data into a public GitHub issue. The issue should only describe the project at a high level.
+
+## Safety rules
+
+Only scan software you own or have clear written permission to test.
+
+SentinelForge blocks public dynamic scans by default and only allows low-impact local/staging baseline checks unless explicit authorization flags are provided.
+
+SentinelForge does not perform exploit chains, credential theft, persistence, lateral movement, denial-of-service testing, destructive payloads, or unauthorized production scanning.
+
+## What SentinelForge does not promise
+
+SentinelForge does not guarantee that software is secure.
+
+It does not replace:
+
+- A professional penetration test
+- A full manual code review
+- A full compliance program
+- Production monitoring
+- Business-logic abuse testing by an expert
+
+Correct promise:
+
+```text
+SentinelForge helps catch common and high-risk security mistakes before you ship.
+```
+
+## Useful commands
 
 Check scanner readiness:
 
 ```bash
 sentinelforge doctor
+```
+
+Create a starter policy file:
+
+```bash
+sentinelforge init-policy
+```
+
+Create a GitHub Actions workflow:
+
+```bash
+sentinelforge init-ci
+```
+
+Explain one finding in plain English:
+
+```bash
+sentinelforge explain --title "Debug mode enabled" --severity medium --category "Static Analysis"
 ```
 
 Fail CI/CD if a report is below a minimum grade:
@@ -79,9 +215,9 @@ Fail CI/CD if a report is below a minimum grade:
 sentinelforge gate --report reports/latest_report.json --minimum-grade B
 ```
 
-## External Scanner Tools
+## External scanner tools
 
-SentinelForge includes placeholders/wrappers for these tools and reports them as missing if not installed:
+SentinelForge includes wrappers for these tools and reports them as missing if not installed:
 
 - Semgrep
 - Bandit
@@ -89,13 +225,15 @@ SentinelForge includes placeholders/wrappers for these tools and reports them as
 - Trivy
 - Gitleaks
 
-The current v0.1 also includes built-in lightweight checks so it can produce useful output even before every external scanner is installed.
+Missing tools do not stop SentinelForge. Scans are stronger when the tools are installed.
 
-## Grade Meaning
+## Grade meaning
 
 - A+ / A: low risk detected by configured scanners
 - B: some issues; fix before public launch if internet-facing
 - C: moderate risk; fix before serious users
 - D / F: do not ship
 
-No scan proves software is perfectly secure. Manual review is still required for business logic, authorization, and abuse cases.
+## License
+
+MIT License. See `LICENSE`.
