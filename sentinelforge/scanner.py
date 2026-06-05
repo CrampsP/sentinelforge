@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .agents import static_analysis_agent, dependency_agent, secrets_agent, container_iac_agent, blue_team_agent
-from .agents import ai_app_agent, route_inventory_agent, product_profile_agent
+from .agents import ai_app_agent, route_inventory_agent
 from .models import SecurityReport
 from .normalization import deduplicate_findings
 from .reporting import write_reports
@@ -49,7 +49,6 @@ def run_scan(
         raise ValueError("SentinelForge v1.5 supports --mode static and --mode standard")
 
     policy = load_policy(policy_path)
-    product_profile = product_profile_agent.build_profile(target)
     started = datetime.now(timezone.utc)
     findings = []
     findings.extend(static_analysis_agent.scan(target))
@@ -90,7 +89,6 @@ def run_scan(
         scan_finished_at=datetime.now(timezone.utc), summary=summary, tools_run=tools_run,
         tools_missing=tools_missing, findings=findings,
         blue_team_checklist=blue_team_agent.blue_team_checklist(target),
-        product_profile=product_profile,
     )
     md_path, json_path = write_reports(report, output_dir)
     return report, md_path, json_path

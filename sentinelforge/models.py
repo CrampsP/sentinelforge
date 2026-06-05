@@ -61,29 +61,6 @@ class ScanSummary(BaseModel):
     counts_by_severity: dict[str, int] = Field(default_factory=dict)
 
 
-class ProductProfile(BaseModel):
-    """High-level product context detected during a scan.
-
-    This is SentinelForge's own release-readiness framing. It intentionally
-    does not copy scanner rules from other projects; it describes which
-    security surfaces were observed and which proven scanner methodologies
-    should be used next.
-    """
-
-    positioning: str = "AI product production-readiness check"
-    is_ai_powered: bool = False
-    detected_surfaces: list[str] = Field(default_factory=list)
-    evidence: list[str] = Field(default_factory=list)
-    recommended_next_steps: list[str] = Field(default_factory=list)
-    methodology: list[str] = Field(default_factory=lambda: [
-        "Static code pattern review",
-        "Dependency and supply-chain review",
-        "Secrets exposure review",
-        "Container and infrastructure configuration review",
-        "AI/LLM application security review",
-        "Safe dynamic baseline testing when an authorized local or staging URL is provided",
-    ])
-
 
 class SecurityReport(BaseModel):
     sentinelforge_version: str = "1.5.0"
@@ -102,4 +79,3 @@ class SecurityReport(BaseModel):
     tools_missing: list[str] = Field(default_factory=list)
     findings: list[Finding] = Field(default_factory=list)
     blue_team_checklist: list[str] = Field(default_factory=list)
-    product_profile: ProductProfile = Field(default_factory=ProductProfile)

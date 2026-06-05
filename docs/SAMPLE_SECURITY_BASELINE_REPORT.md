@@ -101,9 +101,9 @@ What to do:
 - Run containers as a non-root user when possible.
 - Re-run SentinelForge.
 
-## What a customer gets from a paid review
+## How to use this report
 
-A paid Security Baseline Review turns this kind of scanner output into a plain-English handoff:
+This kind of scanner output can be used as a plain-English security handoff:
 
 - What is risky
 - Why it matters

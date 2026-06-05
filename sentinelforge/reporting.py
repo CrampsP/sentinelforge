@@ -48,15 +48,6 @@ def write_markdown_report(report: SecurityReport, json_path: Path, output_dir: s
     out = Path(output_dir); out.mkdir(parents=True, exist_ok=True)
     path = out / "latest_report.md"
     top = sorted(report.findings, key=lambda f: {"critical":5,"high":4,"medium":3,"low":2,"info":1}[f.severity], reverse=True)[:5]
-    profile = report.product_profile
-    profile_lines = [
-        f"- Positioning: **{profile.positioning}**",
-        f"- AI-powered app detected: **{'yes' if profile.is_ai_powered else 'no'}**",
-        f"- Detected security surfaces: {', '.join(profile.detected_surfaces) or 'None detected'}",
-        f"- Evidence: {', '.join(f'`{item}`' for item in profile.evidence[:12]) or 'None'}",
-    ]
-    next_steps = chr(10).join(f"- {step}" for step in profile.recommended_next_steps)
-    methodology = chr(10).join(f"- {item}" for item in profile.methodology)
     text = f"""# SentinelForge Security Report
 
 ## 1. Executive Summary
@@ -64,18 +55,6 @@ def write_markdown_report(report: SecurityReport, json_path: Path, output_dir: s
 SentinelForge v{report.sentinelforge_version} scanned `{report.target}` in `{report.scan_mode}` mode. No scanner can prove software is perfectly secure, but this scan shows what SentinelForge found.
 
 Security standards mapped in this report: {", ".join(report.security_standards)}.
-
-## 1A. AI Product Readiness Snapshot
-
-SentinelForge is positioned as an **AI product checker**: it helps builders prove their AI-generated "AI slop" has gone through a practical production-readiness security check before users touch it.
-
-{chr(10).join(profile_lines)}
-
-Recommended next steps:
-{next_steps or "- Re-run SentinelForge after adding more project files."}
-
-Methodology:
-{methodology}
 
 ## 2. Final Grade
 
@@ -143,7 +122,7 @@ def write_html_report(report: SecurityReport, output_dir: str | Path = "reports"
     out = Path(output_dir); out.mkdir(parents=True, exist_ok=True)
     path = out / "latest_report.html"
     rows = "".join(f"<tr><td>{html.escape(f.finding_id)}</td><td>{html.escape(f.severity)}</td><td>{html.escape(f.title)}</td><td>{html.escape(f.category)}</td></tr>" for f in report.findings)
-    text = f"""<!doctype html><html><head><meta charset='utf-8'><title>SentinelForge Report</title><style>body{{font-family:Arial,sans-serif;max-width:980px;margin:40px auto}}.grade{{font-size:48px;font-weight:bold}}table{{border-collapse:collapse;width:100%}}td,th{{border:1px solid #ddd;padding:8px}}</style></head><body><h1>SentinelForge Security Report</h1><div class='grade'>{html.escape(report.summary.grade)} — {report.summary.score}/100</div><p><b>Decision:</b> {html.escape(report.summary.ship_decision)}</p><h2>AI Product Readiness Snapshot</h2><p>SentinelForge checks whether AI-built software looks ready for production security review, not just whether a scanner printed warnings.</p><p><b>Surfaces:</b> {html.escape(', '.join(report.product_profile.detected_surfaces) or 'None detected')}</p><p>This report is a beginner-friendly safety check for software you own or are allowed to test.</p><h2>Findings</h2><table><tr><th>ID</th><th>Severity</th><th>Title</th><th>Category</th></tr>{rows}</table></body></html>"""
+    text = f"""<!doctype html><html><head><meta charset='utf-8'><title>SentinelForge Report</title><style>body{{font-family:Arial,sans-serif;max-width:980px;margin:40px auto}}.grade{{font-size:48px;font-weight:bold}}table{{border-collapse:collapse;width:100%}}td,th{{border:1px solid #ddd;padding:8px}}</style></head><body><h1>SentinelForge Security Report</h1><div class='grade'>{html.escape(report.summary.grade)} — {report.summary.score}/100</div><p><b>Decision:</b> {html.escape(report.summary.ship_decision)}</p><h2>Findings</h2><table><tr><th>ID</th><th>Severity</th><th>Title</th><th>Category</th></tr>{rows}</table></body></html>"""
     path.write_text(redact_text(text), encoding="utf-8")
     return path
 

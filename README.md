@@ -2,17 +2,16 @@
 
 SentinelForge is a local-first security release checker for software you own or are clearly allowed to test.
 
-It helps solo builders, freelancers, AI app developers, and small teams catch common security mistakes before shipping code.
+It helps developers catch common security mistakes before shipping code.
 
 It does not prove an app is perfectly secure. It gives you a practical first-pass security baseline, a risk score, and a plain-English report.
 
 ## Who this is for
 
-- Solo founders shipping MVPs
-- Freelancers handing projects to clients
-- AI app builders using tools like Cursor, Claude Code, Replit, Lovable, Bolt, Windsurf, or Copilot
-- Small agencies that want a lightweight client handoff check
-- Small teams that want a simple CI security gate before launch
+- Developers scanning local repositories
+- Teams adding a lightweight CI security gate
+- Maintainers checking dependencies, secrets, and deployment files
+- Builders reviewing AI/LLM application risks in code they own
 
 ## What SentinelForge checks
 
@@ -128,32 +127,6 @@ Grade: F
 Decision: Do Not Ship
 Top risks: shell command execution, suspected hardcoded secret, debug mode, outdated dependencies, risky Docker settings
 ```
-
-## Security baseline reviews
-
-SentinelForge can be used locally as a first-pass security release checker. If you want help applying it to your own app, client project, or AI-built codebase, Security Baseline Reviews may be available by request.
-
-Good for:
-
-- AI-built apps before launch
-- Freelance/client handoff reports
-- MVPs before public release
-- Small SaaS projects
-- Automation projects using API keys, webhooks, databases, or AI tools
-
-A review can include:
-
-- SentinelForge scan
-- Plain-English executive summary
-- Top risks and what they mean
-- Fix checklist
-- Release-readiness grade
-- Optional GitHub Actions setup
-- Optional walkthrough explaining the report
-
-To request one, open a GitHub issue using the “Security Baseline Review Request” template.
-
-Important: do not paste private code, passwords, API keys, tokens, `.env` files, or confidential client data into a public GitHub issue. The issue should only describe the project at a high level.
 
 ## Safety rules
 

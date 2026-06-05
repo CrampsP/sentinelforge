@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sentinelforge"
 version = "1.5.1"
-description = "Local-first security release checker for authorized code, AI apps, and small teams"
+description = "Local-first security scanner for authorized code and configurations"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
-authors = [{ name = "Spencer Payne" }]
+authors = [{ name = "SentinelForge contributors" }]
 keywords = ["security", "devsecops", "sast", "ai-security", "cli", "security-scanner"]
 classifiers = [
   "Development Status :: 4 - Beta",

@@ -190,7 +190,7 @@ sentinelforge gate --report reports/latest_report.json --minimum-grade A
 pipx uninstall sentinelforge
 ```
 
-## What Larry verified before calling this done
+## What was verified before calling this done
 
 - The package built successfully.
 - The wheel installed into a clean test environment.
